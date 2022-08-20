@@ -2,8 +2,36 @@ import React from 'react';
 import styled from 'styled-components';
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 import CreateIcon from '@material-ui/icons/Create';
+import InsertCommentIcon from '@material-ui/icons/InsertComment';
+import InboxIcon from '@material-ui/icons/Inbox';
+import DraftsIcon from '@material-ui/icons/Drafts';
+import BookmarkBorderIcon from '@material-ui/icons/BookmarkBorder';
+import PeopleAltIcon from '@material-ui/icons/PeopleAlt';
+import AppsIcon from '@material-ui/icons/Apps';
+import FileCopyIcon from '@material-ui/icons/FileCopy';
+import ExpandLessIcon from '@material-ui/icons/ExpandLess';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import AddIcon from '@material-ui/icons/Add';
+import { collection } from 'firebase/firestore';
+import { useCollection } from 'react-firebase-hooks/firestore';
+
+import SidebarOption from './SidebarOption';
+import { db } from '../firebase';
+
+const sidebarOptions = [
+  { icon: InsertCommentIcon, title: 'Threads' },
+  { icon: InboxIcon, title: 'Mentions & Reactions' },
+  { icon: DraftsIcon, title: 'Saved Items' },
+  { icon: BookmarkBorderIcon, title: 'Channel Browser' },
+  { icon: PeopleAltIcon, title: 'People & User Groups' },
+  { icon: AppsIcon, title: 'Apps' },
+  { icon: FileCopyIcon, title: 'File Browser' },
+  { icon: ExpandLessIcon, title: 'Show Less' },
+];
 
 const Sidebar = () => {
+  const [channels] = useCollection(collection(db, 'rooms'));
+
   return (
     <SidebarContainer>
       <SidebarHeader>
@@ -16,6 +44,16 @@ const Sidebar = () => {
         </SidebarInfo>
         <CreateIcon />
       </SidebarHeader>
+      {sidebarOptions.map(({ icon, title }) => (
+        <SidebarOption key={title} Icon={icon} title={title} />
+      ))}
+      <hr />
+      <SidebarOption Icon={ExpandMoreIcon} title='Channels' />
+      <hr />
+      <SidebarOption Icon={AddIcon} title='Add Channel' addChannelOption />
+      {channels?.docs.map((doc) => (
+        <SidebarOption key={doc.id} id={doc.id} title={doc.data().name} />
+      ))}
     </SidebarContainer>
   );
 };
@@ -29,6 +67,12 @@ const SidebarContainer = styled.div`
   border-top: 1px solid #49274b;
   max-width: 260px;
   margin-top: 60px;
+
+  > hr {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #49274b;
+  }
 `;
 const SidebarHeader = styled.div`
   display: flex;
