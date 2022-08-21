@@ -5,7 +5,7 @@ import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 
 import { db } from '../firebase';
 
-const ChatInput = ({ channelName, channelId }) => {
+const ChatInput = ({ channelName, channelId, chatRef }) => {
   const [input, setInput] = useState('');
 
   const sendMessage = async (e) => {
@@ -26,6 +26,9 @@ const ChatInput = ({ channelName, channelId }) => {
         }
       );
       setInput('');
+      chatRef?.current?.scrollIntoView({
+        behavior: 'smooth',
+      });
       console.log('Message sent successfully with ID: ', sendMessageRef.id);
     } catch (e) {
       console.error('Error sending message: ', e);
@@ -39,7 +42,7 @@ const ChatInput = ({ channelName, channelId }) => {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           type='text'
-          placeholder={`Message #ROOM`}
+          placeholder={`Message #${channelName}`}
         />
         <Button hidden type='submit' onClick={sendMessage}>
           SEND
