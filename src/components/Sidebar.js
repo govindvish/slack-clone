@@ -14,9 +14,10 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import AddIcon from '@material-ui/icons/Add';
 import { collection } from 'firebase/firestore';
 import { useCollection } from 'react-firebase-hooks/firestore';
+import { useAuthState } from 'react-firebase-hooks/auth';
 
 import SidebarOption from './SidebarOption';
-import { db } from '../firebase';
+import { auth, db } from '../firebase';
 
 const sidebarOptions = [
   { icon: InsertCommentIcon, title: 'Threads' },
@@ -31,15 +32,16 @@ const sidebarOptions = [
 
 const Sidebar = () => {
   const [channels] = useCollection(collection(db, 'rooms'));
+  const [user] = useAuthState(auth);
 
   return (
     <SidebarContainer>
       <SidebarHeader>
         <SidebarInfo>
-          <h2>FOLLOW ALONG</h2>
+          <h2>Slack Clone</h2>
           <h3>
             <FiberManualRecordIcon />
-            Govind Vishwakarma
+            {user?.displayName}
           </h3>
         </SidebarInfo>
         <CreateIcon />

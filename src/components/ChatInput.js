@@ -2,10 +2,12 @@ import React, { useState } from 'react';
 import { Button } from '@material-ui/core';
 import styled from 'styled-components';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { useAuthState } from 'react-firebase-hooks/auth';
 
-import { db } from '../firebase';
+import { auth, db } from '../firebase';
 
 const ChatInput = ({ channelName, channelId, chatRef }) => {
+  const [user] = useAuthState(auth);
   const [input, setInput] = useState('');
 
   const sendMessage = async (e) => {
@@ -21,8 +23,8 @@ const ChatInput = ({ channelName, channelId, chatRef }) => {
         {
           message: input,
           timestamp: serverTimestamp(),
-          user: 'Govind Vishwakarma',
-          userImage: 'https://cdn-icons-png.flaticon.com/512/219/219983.png',
+          user: user?.displayName,
+          userImage: user?.photoURL,
         }
       );
       setInput('');
